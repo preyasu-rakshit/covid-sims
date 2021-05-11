@@ -30,3 +30,8 @@ Further, the following variables in main.py can also be changed for changing the
 * `n_infected` - determines the number of people that are infected at the starting of the simulation.
 * `screen_size`- size of the window of the simulation.
 * `video`-  determines whether or not all frames are saved from the beginning of the simulation. Saving frames can be toggled at any point in the simulation by pressing 'v' in the keyboard.
+
+
+### Sample Run
+
+A sample run of the simulation can be found [here](https://www.youtube.com/watch?v=SqPx3Qpeq6A)
