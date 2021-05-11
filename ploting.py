@@ -2,28 +2,6 @@ from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation as fnc_anim
 import pandas as pd
 import pygame
-import time
-
-def animate(i):
-    data = pd.read_csv('data.csv')
-    x = data['Time']
-    y1 = data['Susceptible']
-    y2 = data['Infected']
-    y3 = data['Recovered']
-    y4 = data['Dead']
-
-    plt.cla()
-    plt.plot(x, y1, label='Susceptible')
-    plt.plot(x, y2, label='Infected')
-    plt.plot(x, y3, label='Recovered')
-    plt.plot(x, y4, label='Dead')
-
-    plt.legend(loc='upper right')
-    plt.tight_layout()
-
-
-# ani = fnc_anim(plt.gcf(), animate, interval=1000)
-# plt.show()
 
 class graph(pygame.sprite.Sprite):
 
