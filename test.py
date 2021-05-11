@@ -1,50 +1,38 @@
+from matplotlib import pyplot as plt
+from matplotlib.animation import FuncAnimation as fnc_anim
+import pandas as pd
 import pygame
-import sys
 import random
+import time
+import threading
 
-screen_size = (800,600)
-screen = pygame.display.set_mode(screen_size)
-pygame.display.set_caption("Simulation")
+x1 = []
+y1 = []
 
-clock = pygame.time.Clock()
+def animate(i):
+    x = random.uniform(2, 400)
+    y = random.uniform(1, 10)
+    x1.append(x)
+    y1.append(y)
 
-white = (255, 255, 255)
-red = (255, 0, 0)
-green = (0, 255, 0)
+    plt.cla()
+    plt.plot(x1, y1, label='Susceptible')
+    # plt.plot(x, y2, label='Infected')
+    # plt.plot(x, y3, label='Recovered')
+    # plt.plot(x, y4, label='Dead')
 
-class Creature(pygame.sprite.Sprite):
-    def __init__(self, color, x, y):
-        super().__init__()
-        self.image = pygame.Surface([20, 20])
-        self.image.fill(white)
-        self.image.set_colorkey(white)
-        self.color = color
-
-        pygame.draw.rect(self.image, self.color, [x, y, 20, 20])
-        self.rect = self.image.get_rect()
+    plt.legend(loc='upper right')
+    plt.tight_layout()
 
 
-creatures = pygame.sprite.Group()
-creature = Creature(red, 20, 40)
-creatures.add(creature)
 
-# for i in range(10):
-#     x = random.randint(0, 800)
-#     y = random.randint(0, 600)
-#     creatures.add(Creature(red, x, y))
+def plot():
+    ani = fnc_anim(plt.gcf(), animate, interval=1000)
 
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-            sys.exit()
-    
-    creatures.update()
-    screen.fill((0, 0, 0))
+plotting_thread = threading.Thread(target=plot)
+plotting_thread.start()
+plotting_thread.daemon = True
 
-    creatures.draw(screen)
-
-    pygame.display.flip()
-    clock.tick(60)
-
+while True:
+    print('hi')
+    time.sleep(1)

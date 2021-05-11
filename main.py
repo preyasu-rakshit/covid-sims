@@ -2,12 +2,27 @@ import pygame
 import sys
 import random
 from creature import Creature
+from ploting import graph
+import csv
+import os, shutil
+import threading
+from time import sleep
 
+pygame.init()
+clock = pygame.time.Clock()
 
+screen_size = (1280, 720)
+screen = pygame.display.set_mode(screen_size)
+pygame.display.set_caption("Covid Simulation")
 
-
+creatures = pygame.sprite.Group()
 population = 200
 n_infected = 1
+
+_graph = graph(screen_size)
+plot = pygame.sprite.Group()
+plot.add(_graph)
+
 
 def infect_onclick():
     susceptible_creatures = list(Creature.susceptible_group)
@@ -31,14 +46,25 @@ def make_video(screen):
         yield
 
 
-pygame.init()
-clock = pygame.time.Clock()
+def delete_all(folder):
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-screen_size = (1280, 720)
-screen = pygame.display.set_mode(screen_size)
-pygame.display.set_caption("Covid Simulation")
 
-creatures = pygame.sprite.Group()
+def draw_graph():
+    while True:
+        plot.update()
+        sleep(1)
+        
+plotting_thread = threading.Thread(target=draw_graph)
+plotting_thread.daemon = True
 
 for i in range(population):
     x = random.randint(0, screen_size[0])
@@ -51,12 +77,21 @@ for i in range(n_infected):
     creatures.update()
 
 
+headers = ['Time', 'Susceptible', 'Infected', 'Recovered', 'Dead']
+
+with open('data.csv', 'w') as d:
+    csv_writer = csv.DictWriter(d, fieldnames=headers)
+    csv_writer.writeheader()
+
+plotting_thread.start()
 save_screen = make_video(screen)
 video = False
-T = 10000
+
+T = 5000
 for time in range(T):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            delete_all('plots\\')
             sys.exit()
 
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_v:
@@ -69,8 +104,22 @@ for time in range(T):
         i.x_vel *= -1
         i.y_vel *= -1
     
+    susceptible_num = len(list(Creature.susceptible_group))
+    infected_num = len(list(Creature.infected_group))
+    recovered_num = len(list(Creature.recovered_group))
+    death_num = Creature.Deaths
+    population_alive = susceptible_num + infected_num + recovered_num
+
+    data = [time, susceptible_num, infected_num, recovered_num, death_num]
+
+    with open('data.csv', 'a') as d:
+        csv_writer = csv.writer(d)
+        csv_writer.writerow(data)
+
 
     screen.fill((0, 0, 0))
+    
+    plot.draw(screen)
     creatures.update()
     creatures.draw(screen)
     pygame.display.flip()
@@ -78,12 +127,9 @@ for time in range(T):
     if video:
         next(save_screen)    
     
-    # print(len(Creature.infected_group))
-    # print(len(Creature.susceptible_group))
-    print("number of deaths:", Creature.Deaths)
-    print("number of recoveries:", len(list(Creature.recovered_group)))
     clock.tick(60)
 
 
 pygame.quit()
+delete_all('plots\\')
 # print(len(Creature.infected_group))

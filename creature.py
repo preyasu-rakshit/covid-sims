@@ -46,7 +46,7 @@ class Creature(pygame.sprite.Sprite):
         
         Creature.susceptible_group.add(self)
 
-        self.possible_vel = [1, -1, 2, -2, 3, -3]
+        self.possible_vel = [1, -1, 2, -2]
         self.x_vel = random.choice(self.possible_vel)   
         self.y_vel = random.choice(self.possible_vel)   
         self.possible_vel.append(0)
@@ -56,7 +56,7 @@ class Creature(pygame.sprite.Sprite):
         
         self.time += 1
 
-        if self.time % 5 ==0:
+        if self.time % 8 ==0:
             self.x_vel = random.choice(self.possible_vel)   
             self.y_vel = random.choice(self.possible_vel)
 
