@@ -16,7 +16,7 @@ screen = pygame.display.set_mode(screen_size)
 pygame.display.set_caption("Covid Simulation")
 
 creatures = pygame.sprite.Group()
-population = 200
+population = 300
 n_infected = 1
 
 _graph = graph(screen_size)
@@ -46,10 +46,10 @@ def make_video(screen):
         yield
 
 
-def delete_all(folder):
-    for filename in os.listdir(folder):
-        file_path = os.path.join(folder, filename)
-        try:
+def delete_all(path_to_folder):
+    for filename in os.listdir(path_to_folder):
+        file_path = os.path.join(path_to_folder, filename)
+        try:           
             if os.path.isfile(file_path) or os.path.islink(file_path):
                 os.unlink(file_path)
             elif os.path.isdir(file_path):
@@ -86,12 +86,12 @@ with open('data.csv', 'w') as d:
 plotting_thread.start()
 save_screen = make_video(screen)
 video = False
-
 T = 5000
 for time in range(T):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             delete_all('plots\\')
+            pygame.image.save(_graph.raw_fig, 'result.png')
             sys.exit()
 
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_v:

@@ -3,4 +3,4 @@ __pycache__/*
 __pycache__/creature.cpython-38.pyc
 plots/*
 test.py
-test.py
+result.png

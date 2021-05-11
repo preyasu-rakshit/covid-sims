@@ -1,5 +1,5 @@
 from matplotlib import pyplot as plt
-from matplotlib.animation import FuncAnimation as fnc_anim
+import matplotlib
 import pandas as pd
 import pygame
 
@@ -8,9 +8,25 @@ class graph(pygame.sprite.Sprite):
     def __init__(self, screen_size):
         
         super().__init__()
+        
+        matplotlib.rc('axes',edgecolor='w')
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+
+        ax.set_xlabel('Time')
+        ax.set_ylabel('No. of People')
+
+        ax.spines['bottom'].set_color('white')
+        ax.spines['right'].set_color('white')
+        ax.spines['left'].set_color('white')
+        ax.spines['top'].set_color('white')
+        ax.xaxis.label.set_color('white')
+        ax.yaxis.label.set_color('white')
+        ax.tick_params(axis='y', colors='white')
+
         self.TIME = 0
         self.fignum = 1
-        self.graph_size = [280, 192]
+        self.graph_size = [480, 360]
         self.draw_plot()
 
         self.image = self.current_fig
@@ -42,8 +58,8 @@ class graph(pygame.sprite.Sprite):
 
         img = open(f'plots\plot{self.fignum}.png')
 
-        raw_fig = pygame.image.load(img)
-        current_fig = pygame.transform.scale(raw_fig, self.graph_size)
+        self.raw_fig = pygame.image.load(img)
+        current_fig = pygame.transform.scale(self.raw_fig, self.graph_size)
         self.current_fig = current_fig
 
         self.image = self.current_fig

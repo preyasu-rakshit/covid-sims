@@ -13,10 +13,10 @@ white_ball = pygame.image.load('assets\white.png')
 susceptible_ball = pygame.transform.scale(white_ball, guy_size)
 
 green_ball = pygame.image.load('assets\green.png')
-vaccinated_ball = pygame.transform.scale(green_ball, guy_size)
+recovered_ball = pygame.transform.scale(green_ball, guy_size)
 
 blue_ball = pygame.image.load('assets\\blue.png')
-recovered_ball = pygame.transform.scale(blue_ball, guy_size)
+vaccinated_ball = pygame.transform.scale(blue_ball, guy_size)
 
 
 class Creature(pygame.sprite.Sprite):
