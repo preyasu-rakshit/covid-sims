@@ -11,7 +11,7 @@ from time import sleep
 pygame.init()
 clock = pygame.time.Clock()
 
-screen_size = (720, 1280)
+screen_size = (1280, 720)
 screen = pygame.display.set_mode(screen_size)
 pygame.display.set_caption("Covid Simulation")
 
@@ -85,7 +85,7 @@ with open('data.csv', 'w') as d:
 
 plotting_thread.start()
 save_screen = make_video(screen)
-video = True
+video = False
 T = 5000
 for time in range(T):
     for event in pygame.event.get():

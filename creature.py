@@ -1,6 +1,5 @@
 import pygame
 import random
-import names
 
 
 pygame.init()
@@ -34,7 +33,6 @@ class Creature(pygame.sprite.Sprite):
         self.rect.y = y
         self.WIDTH = screen_size[0]
         self.HEIGHT = screen_size[1]
-        # self.name = names.get_full_name()
 
         self.state = 'healthy'
         self.pre_state = 'healthy'
@@ -65,19 +63,15 @@ class Creature(pygame.sprite.Sprite):
         
         if self.rect.left >= self.WIDTH:
             self.rect.left = 0
-            # self.change_vel()
 
         if self.rect.right <= 0:
             self.rect.right = self.WIDTH
-            # self.change_vel()
 
         if self.rect.top >= self.HEIGHT:
             self.rect.top = 0
-            # self.change_vel()
 
         if self.rect.bottom <= 0:
             self.rect.bottom = self.HEIGHT
-            # self.change_vel()
 
 
         if (self.time - self.time_of_infection) > self.duration_of_infec and self.state == 'infected':
