@@ -4,3 +4,4 @@ __pycache__/creature.cpython-38.pyc
 plots/*
 test.py
 result.png
+data.csv
