@@ -19,6 +19,12 @@ creatures = pygame.sprite.Group()
 population = 300
 n_infected = 1
 
+headers = ['Time', 'Susceptible', 'Infected', 'Recovered', 'Dead']
+
+with open('data.csv', 'w') as d:
+    csv_writer = csv.DictWriter(d, fieldnames=headers)
+    csv_writer.writeheader()
+
 _graph = graph(screen_size)
 plot = pygame.sprite.Group()
 plot.add(_graph)
@@ -77,12 +83,7 @@ for i in range(n_infected):
     creatures.update()
 
 
-headers = ['Time', 'Susceptible', 'Infected', 'Recovered', 'Dead']
-
-with open('data.csv', 'w') as d:
-    csv_writer = csv.DictWriter(d, fieldnames=headers)
-    csv_writer.writeheader()
-
+Creature.set_quarantine_points(screen_size[0], screen_size[1], population)
 plotting_thread.start()
 save_screen = make_video(screen)
 video = False
@@ -94,8 +95,18 @@ for time in range(T):
             pygame.image.save(_graph.raw_fig, 'result.png')
             sys.exit()
 
-        elif event.type == pygame.KEYDOWN and event.key == pygame.K_v:
-            video = not video
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_v:
+                video = not video
+
+            if event.key == pygame.K_q:
+                for i in creatures:
+                    i.quarantine()
+
+            if event.key == pygame.K_e:
+                Creature.set_quarantine_points(screen_size[0], screen_size[1], population)
+                for i in creatures:
+                    i.quarantined = False
 
 
     collision_group = pygame.sprite.groupcollide(Creature.susceptible_group, Creature.infected_group, False, False)
