@@ -87,7 +87,7 @@ Creature.set_quarantine_points(screen_size[0], screen_size[1], population)
 plotting_thread.start()
 save_screen = make_video(screen)
 video = False
-T = 5000
+T = 10000
 for time in range(T):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -112,8 +112,6 @@ for time in range(T):
     collision_group = pygame.sprite.groupcollide(Creature.susceptible_group, Creature.infected_group, False, False)
     for i in collision_group:
         i.infect()
-        i.x_vel *= -1
-        i.y_vel *= -1
     
     susceptible_num = len(list(Creature.susceptible_group))
     infected_num = len(list(Creature.infected_group))

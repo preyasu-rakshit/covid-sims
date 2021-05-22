@@ -52,6 +52,8 @@ class Creature(pygame.sprite.Sprite):
         self.y_vel = random.choice(self.possible_vel)   
         self.possible_vel.append(0)
 
+        self.moving = False
+
 
     def update(self):
         self.time += 1
@@ -64,6 +66,15 @@ class Creature(pygame.sprite.Sprite):
         else:
             self.x_vel = 0
             self.y_vel = 0
+
+            if self.moving:
+                point = next(self.path, "end")
+                if point == "end":
+                    self.moving = False
+                else:
+                    self.rect.center = point
+                
+                
         
         self.rect.x += self.x_vel
         self.rect.y += self.y_vel
@@ -91,8 +102,8 @@ class Creature(pygame.sprite.Sprite):
         self.check_state()
 
     def change_vel(self):
-        self.x_vel = -self.x_vel
-        self.y_vel = -self.y_vel
+            self.x_vel = -self.x_vel
+            self.y_vel = -self.y_vel
 
     def check_state(self):
         
@@ -129,16 +140,34 @@ class Creature(pygame.sprite.Sprite):
                     min_point = i
                     min_dist =_dist
 
-            self.rect.center = min_point
+            self.move(min_point, 100)
             Creature.quarantine_points.remove(min_point)
         
         self.quarantined = True
+
+    def move(self, target, step):
+        x1 = self.rect.centerx
+        y1 = self.rect.centery
+        x2 = target[0]
+        y2 = target[1]
+        path = []
+
+        for m in range(1, step + 1):
+            n = step - m
+            x = ((m*x2) + (n*x1))/(m + n) 
+            y = ((m*y2) + (n*y1))/(m + n)
+            path.append([x,y])
+
+        self.path = iter(path)
+        self.moving = True
 
 
     @classmethod
     def set_quarantine_points(self, width, height, population):
         x_points =[]
         y_points =[]
+        eff_width = width - 10
+        eff_height = height - 10
         
         for i in range(1, math.ceil(math.sqrt(population)) + 1):
             if population % i == 0:
@@ -146,11 +175,11 @@ class Creature(pygame.sprite.Sprite):
 
         y_div = math.floor(population/x_div)
 
-        for j in range(x_div):
-            x_points.append(j * (width/x_div))
+        for j in range(1, x_div + 1):
+            x_points.append(j * (eff_width/x_div))
 
-        for k in range(y_div):
-            y_points.append(k * (height/y_div))
+        for k in range(1, y_div + 1):
+            y_points.append(k * (eff_height/y_div))
 
         for l in x_points:
             for m in y_points:
