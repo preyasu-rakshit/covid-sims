@@ -5,7 +5,6 @@ import math
 
 pygame.init()
 guy_size = (10, 10)
-
 red_ball = pygame.image.load('assets\Red.png')
 infected_ball = pygame.transform.scale(red_ball, guy_size)
 
@@ -26,8 +25,11 @@ class Creature(pygame.sprite.Sprite):
     recovered_group = pygame.sprite.Group()    
     Deaths = 0
     quarantine_points = []
+    social_distance_factor = 0.9
+    good_people = 0
+    quarantine_threshold = 0.10
     
-    def __init__(self, screen_size, x, y):
+    def __init__(self, screen_size, x, y, population):
         super().__init__()
         self.image = susceptible_ball
         self.rect = self.image.get_rect()
@@ -38,6 +40,7 @@ class Creature(pygame.sprite.Sprite):
 
         self.state = 'healthy'
         self.pre_state = 'healthy'
+        self.population = population
         self.quarantined = False
         self.time = 0
         self.time_of_infection = 0
@@ -53,6 +56,7 @@ class Creature(pygame.sprite.Sprite):
         self.possible_vel.append(0)
 
         self.moving = False
+        self.assign_habits()
 
 
     def update(self):
@@ -66,16 +70,7 @@ class Creature(pygame.sprite.Sprite):
         else:
             self.x_vel = 0
             self.y_vel = 0
-
-            if self.moving:
-                point = next(self.path, "end")
-                if point == "end":
-                    self.moving = False
-                else:
-                    self.rect.center = point
-                
-                
-        
+                                       
         self.rect.x += self.x_vel
         self.rect.y += self.y_vel
 
@@ -100,10 +95,29 @@ class Creature(pygame.sprite.Sprite):
                 self.state = 'recovered' 
 
         self.check_state()
+        self.check_moving()
+        self.check_quarantine()
 
     def change_vel(self):
             self.x_vel = -self.x_vel
             self.y_vel = -self.y_vel
+
+    def check_moving(self):
+        if self.moving:
+            point = next(self.path, "end")
+            if point == "end":
+                self.moving = False
+            else:
+                self.rect.center = point
+
+    def assign_habits(self):
+        chance = random.uniform(0, 1)
+        if chance < Creature.social_distance_factor:
+            self.type = "law_abiding"
+            Creature.good_people += 1
+        else:
+            self.type = "rowdy"
+
 
     def check_state(self):
         
@@ -125,25 +139,32 @@ class Creature(pygame.sprite.Sprite):
                 Creature.Deaths += 1
                 self.kill()
 
+    def check_quarantine(self):
+        num = len(list(Creature.infected_group))
+        if num > Creature.quarantine_threshold * self.population:
+            self.quarantine()
+
+
     
     def infect(self):
         a = random.uniform(0, 1)
         if a < self.chance_of_infection:
             self.state = 'infected'
 
-    def quarantine(self): 
-        if len(Creature.quarantine_points) > 0:
-            min_dist = np.inf        
-            for i in Creature.quarantine_points:
-                _dist = math.sqrt((self.rect.centerx - i[0])**2 + (self.rect.centery - i[1])**2)
-                if _dist < min_dist:
-                    min_point = i
-                    min_dist =_dist
+    def quarantine(self):
+        if self.type == "law_abiding":
+            if len(Creature.quarantine_points) > 0:
+                min_dist = np.inf        
+                for i in Creature.quarantine_points:
+                    _dist = math.sqrt((self.rect.centerx - i[0])**2 + (self.rect.centery - i[1])**2)
+                    if _dist < min_dist:
+                        min_point = i
+                        min_dist =_dist
 
-            self.move(min_point, 100)
-            Creature.quarantine_points.remove(min_point)
+                self.move(min_point, 100)
+                Creature.quarantine_points.remove(min_point)
         
-        self.quarantined = True
+            self.quarantined = True
 
     def move(self, target, step):
         x1 = self.rect.centerx
@@ -163,24 +184,35 @@ class Creature(pygame.sprite.Sprite):
 
 
     @classmethod
-    def set_quarantine_points(self, width, height, population):
+    def set_quarantine_points(self, width, height):
         x_points =[]
         y_points =[]
-        eff_width = width - 10
-        eff_height = height - 10
+        Creature.quarantine_points = []
         
-        for i in range(1, math.ceil(math.sqrt(population)) + 1):
-            if population % i == 0:
+        for i in range(1, math.ceil(math.sqrt(Creature.good_people)) - 1):
+            if Creature.good_people % i == 0:
                 x_div = i
 
-        y_div = math.floor(population/x_div)
+        y_div = math.floor(Creature.good_people/x_div)
 
-        for j in range(1, x_div + 1):
-            x_points.append(j * (eff_width/x_div))
 
-        for k in range(1, y_div + 1):
-            y_points.append(k * (eff_height/y_div))
+        for j in range(0, x_div):
+            x = (j * width)/(x_div - 1)
+            x_points.append(x)
+
+
+        for k in range(0, y_div):
+            y = (k * height)/(y_div - 1)
+            y_points.append(y)
 
         for l in x_points:
             for m in y_points:
                 Creature.quarantine_points.append([l, m])
+
+        return Creature.quarantine_points
+
+
+
+if __name__ == "__main__":
+    test = Creature.set_quarantine_points(1280, 720, 150)
+    print(test)

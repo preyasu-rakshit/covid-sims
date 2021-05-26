@@ -30,16 +30,6 @@ plot = pygame.sprite.Group()
 plot.add(_graph)
 
 
-def infect_onclick():
-    susceptible_creatures = list(Creature.susceptible_group)
-    if len(susceptible_creatures) > 0:
-        i = random.choice(susceptible_creatures)
-        i.state = 'infected'
-        # susceptible_creatures.remove(i)
-    else:
-        return
-
-
 def make_video(screen):
 
     _image_num = 0
@@ -75,7 +65,7 @@ plotting_thread.daemon = True
 for i in range(population):
     x = random.randint(0, screen_size[0])
     y = random.randint(0, screen_size[1])
-    creatures.add(Creature(screen_size, x, y))
+    creatures.add(Creature(screen_size, x, y, population))
 
 for i in range(n_infected):
     guy = random.choice(list(Creature.susceptible_group))
@@ -83,7 +73,7 @@ for i in range(n_infected):
     creatures.update()
 
 
-Creature.set_quarantine_points(screen_size[0], screen_size[1], population)
+Creature.set_quarantine_points(screen_size[0], screen_size[1])
 plotting_thread.start()
 save_screen = make_video(screen)
 video = False
@@ -104,7 +94,7 @@ for time in range(T):
                     i.quarantine()
 
             if event.key == pygame.K_e:
-                Creature.set_quarantine_points(screen_size[0], screen_size[1], population)
+                Creature.set_quarantine_points(screen_size[0], screen_size[1])
                 for i in creatures:
                     i.quarantined = False
 
