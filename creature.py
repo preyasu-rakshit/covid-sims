@@ -27,7 +27,8 @@ class Creature(pygame.sprite.Sprite):
     quarantine_points = []
     social_distance_factor = 0.9
     good_people = 0
-    quarantine_threshold = 0.10
+    quarantine_threshold = 0.30
+    quarantine_end_threshold = 0.10
     
     def __init__(self, screen_size, x, y, population):
         super().__init__()
@@ -143,6 +144,9 @@ class Creature(pygame.sprite.Sprite):
         num = len(list(Creature.infected_group))
         if num > Creature.quarantine_threshold * self.population:
             self.quarantine()
+
+        if num < Creature.quarantine_end_threshold * self.population and self.quarantined:
+            self.quarantined = False
 
 
     

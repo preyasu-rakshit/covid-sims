@@ -9,12 +9,12 @@ This project is hugely inspired by 3Blue1Brown's [Simulating an Epidemic](https:
 With this project, I plan to achieve the following:
 
 1. Simulate the scenarios presented in the video:
-   * Spread of the disease in a population of randomly moving dots.
-   * Mechanism of quarantine
-   * Travelling dots between different states/provinces
-   * Dots social distancing
-2. Being able to plot number of susceptible, infected, recovered and dead dots in real time.
-3. Having some procedure of generating the visualization in video format (Currently achieved by saving each frame of the simulation in the video directory).
+   * Spread of the disease in a population of randomly moving dots. *(done)*
+   * Mechanism of quarantine. *(done)*
+   * Travelling dots between different states/provinces. *(pending)*
+   * Dots social distancing. *(done)*
+2. Being able to plot number of susceptible, infected, recovered and dead dots in real time.*(done)*
+3. Having some procedure of generating the visualization in video format (Currently achieved by saving each frame of the simulation in the video directory). *(done)*
 
 ### Important Variables
 
@@ -23,6 +23,9 @@ Following are the variables in the creature.py file that changes the behaviour o
 * `self.chance_of_infection` - determines probability of a susceptible dot getting infected upon coming in contact with an infected dot.
 * `self.chance_of_death` - determines probability of an infected dot dying due to the infection.
 * `self.duration_of_infec` - determines the number of frames for which the infection lasts.
+* `Creature.social_distance_factor` - determines the percentage of dots that obey lockdown restrictions
+* `Creature.quarantine_threshold` - determines after what percentage of the population gets infected, the lockdown is initiated.
+* `Creature.quarantine_end_threshold`- determines at what percentage of cases lockdown ends.
 
 Further, the following variables in main.py can also be changed for changing the conditions of the simulation:
 
@@ -33,4 +36,4 @@ Further, the following variables in main.py can also be changed for changing the
 
 ### Sample Run
 
-A sample run of the simulation can be found [here](https://www.youtube.com/watch?v=SqPx3Qpeq6A)
+A sample run of the simulation can be found [here.](https://www.youtube.com/watch?v=SqPx3Qpeq6A) *(Currently outdated, does not showcase the quarantine feature)*
